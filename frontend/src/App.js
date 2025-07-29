@@ -1,5 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
+// import Login from './components/Login';
 
 function App() {
   return (
@@ -20,6 +21,8 @@ function App() {
             <li>Preview images and videos</li>
           </ul>
         </section>
+        {/* Uncomment the line below to use the Login component */}
+        {/* <Login /> */}
       </main>
     </div>
   );
