@@ -22,7 +22,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/gallery" element={<MediaGallery />} />
           <Route path="/upload" element={<ImageUpload />} />
           <Route path="/media/:id" element={<ImageDetail />} />
@@ -39,3 +39,4 @@ function App() {
 }
 
 export default App;
+
