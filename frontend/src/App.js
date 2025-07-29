@@ -4,20 +4,23 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
+      <header>
         <img src={logo} className="App-logo" alt="logo" />
+        <h1>Welcome to Media Gallery Management System</h1>
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Manage and explore your media files with ease.
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
       </header>
+      <main>
+        <section>
+          <h2>Features</h2>
+          <ul>
+            <li>Upload and organize media files</li>
+            <li>Search and filter your gallery</li>
+            <li>Preview images and videos</li>
+          </ul>
+        </section>
+      </main>
     </div>
   );
 }
