@@ -1,30 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
-// import Login from './components/Login';
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Navbar from "./components/navbar";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/dashboard";
+import MediaGallery from "./pages/MediaGallery";
+import ImageUpload from "./pages/ImageUpload";
+import ImageDetail from "./pages/ImageDetail";
+import ZipDownload from "./pages/ZipDownload";
+import Profile from "./pages/Profile";
+import UserManagement from "./pages/UserManagement";
+import ContactForm from "./pages/ContactForm";
+import ContactMessages from "./pages/ContactMessages";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
-    <div className="App">
-      <header>
-        <img src={logo} className="App-logo" alt="logo" />
-        <h1>Welcome to Media Gallery Management System</h1>
-        <p>
-          Manage and explore your media files with ease.
-        </p>
-      </header>
-      <main>
-        <section>
-          <h2>Features</h2>
-          <ul>
-            <li>Upload and organize media files</li>
-            <li>Search and filter your gallery</li>
-            <li>Preview images and videos</li>
-          </ul>
-        </section>
-        {/* Uncomment the line below to use the Login component */}
-        {/* <Login /> */}
-      </main>
-    </div>
+    <BrowserRouter>
+      <div className="min-h-screen bg-gray-100">
+        <Navbar />
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/gallery" element={<MediaGallery />} />
+          <Route path="/upload" element={<ImageUpload />} />
+          <Route path="/media/:id" element={<ImageDetail />} />
+          <Route path="/zip-download" element={<ZipDownload />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/admin/users" element={<UserManagement />} />
+          <Route path="/contact" element={<ContactForm />} />
+          <Route path="/admin/messages" element={<ContactMessages />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
 
