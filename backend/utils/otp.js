@@ -1,45 +1,22 @@
-const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 
-/**
- * Utility functions for generating and verifying OTPs
- */
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_PASS,
+  },
+});
 
+const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
-/**
- * Generates a numeric OTP of given length.
- * @param {number} length - Length of the OTP.
- * @returns {string} - Generated OTP.
- */
-function generateOTP(length = 6) {
-    const digits = '0123456789';
-    let otp = '';
-    for (let i = 0; i < length; i++) {
-        otp += digits[Math.floor(Math.random() * 10)];
-    }
-    return otp;
-}
-
-/**
- * Hashes the OTP using SHA256 for secure storage/verification.
- * @param {string} otp - The OTP to hash.
- * @returns {string} - The hashed OTP.
- */
-function hashOTP(otp) {
-    return crypto.createHash('sha256').update(otp).digest('hex');
-}
-
-/**
- * Verifies if a given OTP matches the hashed OTP.
- * @param {string} otp - The plain OTP.
- * @param {string} hashedOTP - The hashed OTP.
- * @returns {boolean}
- */
-function verifyOTP(otp, hashedOTP) {
-    return hashOTP(otp) === hashedOTP;
-}
-
-module.exports = {
-    generateOTP,
-    hashOTP,
-    verifyOTP,
+const sendOTP = async (email, otp) => {
+  await transporter.sendMail({
+    from: process.env.GMAIL_USER,
+    to: email,
+    subject: 'Your OTP Code',
+    text: `Your OTP is ${otp}. Valid for 10 minutes.`,
+  });
 };
+
+module.exports = { generateOTP, sendOTP };

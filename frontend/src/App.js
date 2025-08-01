@@ -1,42 +1,148 @@
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from "./components/navbar";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/dashboard";
-import MediaGallery from "./pages/MediaGallery";
-import ImageUpload from "./pages/ImageUpload";
-import ImageDetail from "./pages/ImageDetail";
-import ZipDownload from "./pages/ZipDownload";
-import Profile from "./pages/Profile";
-import UserManagement from "./pages/UserManagement";
-import ContactForm from "./pages/ContactForm";
-import ContactMessages from "./pages/ContactMessages";
-import NotFound from "./pages/NotFound";
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import Dashboard from './pages/Dashboard';
+import MediaGallery from './pages/MediaGallery';
+import ImageUpload from './pages/ImageUpload';
+import ImageDetail from './pages/ImageDetail';
+import ZipDownloadPanel from './pages/zipDownloadPanel';
+import UserProfile from './pages/userProfile';
+import AdminUserManagement from './pages/AdminUserManagement';
+import ContactPage from './pages/ContactPage';
+import AdminContactMessages from './pages/AdminContactMessages';
+//import NotFound from './pages/NotFound';
+
+// Protected Route Component
+function ProtectedRoute({ children, requireAdmin = false }) {
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+
+  useEffect(() => {
+    const verifyToken = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setIsAuthenticated(false);
+        return;
+      }
+      try {
+        // Assuming backend has an endpoint to verify token and return user data
+        const res = await axios.get('http://localhost:5000/api/auth/verify', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setIsAuthenticated(true);
+        setUserRole(res.data.role); // Assuming backend returns { userId, role }
+      } catch (error) {
+        setIsAuthenticated(false);
+        localStorage.removeItem('token');
+      }
+    };
+    verifyToken();
+  }, []);
+
+  if (isAuthenticated === null) return <div>Loading...</div>;
+
+  if (!isAuthenticated) return <Navigate to="/login" />;
+  if (requireAdmin && userRole !== 'admin') return <Navigate to="/unauthorized" />;
+
+  return children;
+}
 
 function App() {
   return (
-    <BrowserRouter>
-      <div className="min-h-screen bg-gray-100">
-        <Navbar />
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/gallery" element={<MediaGallery />} />
-          <Route path="/upload" element={<ImageUpload />} />
-          <Route path="/media/:id" element={<ImageDetail />} />
-          <Route path="/zip-download" element={<ZipDownload />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/admin/users" element={<UserManagement />} />
-          <Route path="/contact" element={<ContactForm />} />
-          <Route path="/admin/messages" element={<ContactMessages />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </div>
-    </BrowserRouter>
+    <Router>
+      <Routes>
+       
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+
+       
+        <Route
+          path="/gallery"
+          element={
+            <ProtectedRoute>
+              <MediaGallery />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/upload"
+          element={
+            <ProtectedRoute>
+              <ImageUpload />
+            </ProtectedRoute>
+          }
+        />
+
+          <Route 
+            path="/register" 
+            element={
+            <RegisterPage />
+            }
+           />
+
+        <Route
+          path="/image/:id"
+          element={
+            <ProtectedRoute>
+              <ImageDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/zip-download"
+          element={
+            <ProtectedRoute>
+              <zipDownloadPanel />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <UserProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <ProtectedRoute>
+              <ContactPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+  }
+/>
+
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute requireAdmin={true}>
+              <AdminUserManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/contact"
+          element={
+            <ProtectedRoute requireAdmin={true}>
+              <AdminContactMessages />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </Router>
   );
 }
 
 export default App;
-
